@@ -1,0 +1,12 @@
+{
+  "name": "publisher",
+  "nodes": [
+    {"parameters": {"httpMethod":"POST","path":"publisher","responseMode":"onReceived","responseData":"{\"ok\":true}"},"id":"Webhook","name":"Webhook","type":"n8n-nodes-base.webhook","typeVersion":1,"position":[200,200]},
+    {"parameters": {"authentication":"none","url":"http://api:5000/api/videos/{{$json[\"body\"][\"video_id\"]}}/publish","jsonParameters":true,"sendBody":true,"bodyParametersJson":"{\\n  \\\"platform\\\": \\\"youtube\\\"\\n}"},"id":"YT","name":"Publish YouTube","type":"n8n-nodes-base.httpRequest","typeVersion":4,"position":[500,150]},
+    {"parameters": {"authentication":"none","url":"http://api:5000/api/videos/{{$json[\"body\"][\"video_id\"]}}/publish","jsonParameters":true,"sendBody":true,"bodyParametersJson":"{\\n  \\\"platform\\\": \\\"tiktok\\\"\\n}"},"id":"TT","name":"Publish TikTok (simu)","type":"n8n-nodes-base.httpRequest","typeVersion":4,"position":[500,250]},
+    {"parameters": {"authentication":"none","url":"http://api:5000/api/videos/{{$json[\"body\"][\"video_id\"]}}/publish","jsonParameters":true,"sendBody":true,"bodyParametersJson":"{\\n  \\\"platform\\\": \\\"instagram\\\"\\n}"},"id":"IG","name":"Publish Instagram (simu)","type":"n8n-nodes-base.httpRequest","typeVersion":4,"position":[500,350]}
+  ],
+  "connections": {"Webhook":{"main":[[{"node":"Publish YouTube","type":"main","index":0},{"node":"Publish TikTok (simu)","type":"main","index":0},{"node":"Publish Instagram (simu)","type":"main","index":0}]]}},
+  "active": true,
+  "settings": {}
+}

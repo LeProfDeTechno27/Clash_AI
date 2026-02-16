@@ -1,0 +1,14 @@
+﻿{
+  "name": "video-generator",
+  "nodes": [
+    {"parameters": {"httpMethod":"POST","path":"video-gen-start","responseMode":"onReceived","responseData":"{\"ok\":true}"},"id":"Webhook","name":"Webhook","type":"n8n-nodes-base.webhook","typeVersion":1,"position":[200,200]},
+    {"parameters": {"authentication":"none","url":"http://api:5000/tools/video/generate","jsonParameters":true,"sendBody":true,"bodyParametersJson":"{\\n  \\\"debate_id\\\": \\\"={{$json[\\\"body\\\"][\\\"debate_id\\\"]}}\\\",\\n  \\\"width\\\": 3840,\\n  \\\"height\\\": 2160\\n}"},"id":"Gen","name":"Generate Long","type":"n8n-nodes-base.httpRequest","typeVersion":4,"position":[500,200]},
+    {"parameters": {"authentication":"none","url":"http://api:5000/tools/video/segment","jsonParameters":true,"sendBody":true,"bodyParametersJson":"{\\n  \\\"debate_id\\\": \\\"={{$json[\\\"body\\\"][\\\"debate_id\\\"]}}\\\",\\n  \\\"segments\\\":[{\\\"start\\\":0,\\\"duration\\\":20},{\\\"start\\\":20,\\\"duration\\\":20},{\\\"start\\\":40,\\\"duration\\\":20}]\\n}"},"id":"Seg","name":"Make Shorts","type":"n8n-nodes-base.httpRequest","typeVersion":4,"position":[800,200]},
+    {"parameters": {"authentication":"none","url":"http://api:5000/webhooks/n8n/video-complete","jsonParameters":true,"sendBody":true,"bodyParametersJson":"{\\n  \\\", "sendHeaders": true, "headerParametersJson": "{\\\"x-webhook-secret\\\":\\\"changeme\\\"}"debate_id\\\": \\\"={{$json[\\\"body\\\"][\\\"debate_id\\\"]}}\\\"\\n}"},"id":"Notify","name":"Notify Backend","type":"n8n-nodes-base.httpRequest","typeVersion":4,"position":[1100,200]}
+  ],
+  "connections": {"Webhook":{"main":[[{"node":"Generate Long","type":"main","index":0}]]},"Generate Long":{"main":[[{"node":"Make Shorts","type":"main","index":0}]]},"Make Shorts":{"main":[[{"node":"Notify Backend","type":"main","index":0}]]}},
+  "active": true,
+  "settings": {}
+}
+
+

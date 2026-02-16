@@ -1,0 +1,12 @@
+﻿{
+  "name": "debate-generator",
+  "nodes": [
+    {"parameters": {"httpMethod":"POST","path":"debate-generator","responseMode":"onReceived","responseData":"{\"ok\":true}"},"id":"Webhook","name":"Webhook","type":"n8n-nodes-base.webhook","typeVersion":1,"position":[200,200]},
+    {"parameters": {"authentication":"none","url":"http://api:5000/webhooks/n8n/debate-complete","jsonParameters":true,"sendBody":true,"bodyParametersJson":"{\\n  \\\", "sendHeaders": true, "headerParametersJson": "{\\\"x-webhook-secret\\\":\\\"changeme\\\"}"debate_id\\\": \\\"={{$json[\\\"body\\\"][\\\"debate_id\\\"]}}\\\"\\n}"},"id":"Notify","name":"Notify Backend","type":"n8n-nodes-base.httpRequest","typeVersion":4,"position":[500,200]}
+  ],
+  "connections": {"Webhook":{"main":[[{"node":"Notify Backend","type":"main","index":0}]]}},
+  "active": true,
+  "settings": {}
+}
+
+

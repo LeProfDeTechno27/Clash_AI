@@ -1,0 +1,13 @@
+﻿{
+  "name": "audio-generator",
+  "nodes": [
+    {"parameters": {"httpMethod":"POST","path":"audio-start","responseMode":"onReceived","responseData":"{\"ok\":true}"},"id":"Webhook","name":"Webhook","type":"n8n-nodes-base.webhook","typeVersion":1,"position":[200,200]},
+    {"parameters": {"authentication":"none","url":"http://api:5000/tools/tts/batch","jsonParameters":true,"sendBody":true,"bodyParametersJson":"{\\n  \\\"debate_id\\\": \\\"={{$json[\\\"body\\\"][\\\"debate_id\\\"]}}\\\",\\n  \\\"speakers\\\": [\\\"speaker1\\\", \\\"speaker2\\\", \\\"moderator\\\"],\\n  \\\"duration\\\": 10\\n}"},"id":"TTS","name":"Generate Audio","type":"n8n-nodes-base.httpRequest","typeVersion":4,"position":[500,200]},
+    {"parameters": {"authentication":"none","url":"http://api:5000/webhooks/n8n/audio-complete","jsonParameters":true,"sendBody":true,"bodyParametersJson":"{\\n  \\\", "sendHeaders": true, "headerParametersJson": "{\\\"x-webhook-secret\\\":\\\"changeme\\\"}"debate_id\\\": \\\"={{$json[\\\"body\\\"][\\\"debate_id\\\"]}}\\\"\\n}"},"id":"Notify","name":"Notify Backend","type":"n8n-nodes-base.httpRequest","typeVersion":4,"position":[800,200]}
+  ],
+  "connections": {"Webhook":{"main":[[{"node":"Generate Audio","type":"main","index":0}]]},"Generate Audio":{"main":[[{"node":"Notify Backend","type":"main","index":0}]]}},
+  "active": true,
+  "settings": {}
+}
+
+

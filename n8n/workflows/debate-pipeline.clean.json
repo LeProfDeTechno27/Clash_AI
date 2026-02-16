@@ -1,0 +1,20 @@
+{
+  "name": "Debate Pipeline",
+  "nodes": [
+    {"parameters": {"httpMethod":"POST","path":"debate-start","responseMode":"onReceived","responseData":"{\"ok\":true}"},"id":"Webhook","name":"Webhook","type":"n8n-nodes-base.webhook","typeVersion":1,"position":[200,200]},
+    {"parameters": {"authentication":"none","url":"http://api:5000/tools/tts/batch","jsonParameters":true,"sendBody":true,"bodyParametersJson":"{\n  \"debate_id\": \"={{$json[\"body\"][\"debate_id\"]}}\",\n  \"speakers\": [\"speaker1\", \"speaker2\", \"moderator\"],\n  \"duration\": 10\n}"},"id":"TTS","name":"Generate Audio","type":"n8n-nodes-base.httpRequest","typeVersion":4,"position":[500,200]},
+    {"parameters": {"authentication":"none","url":"http://api:5000/webhooks/n8n/audio-complete","jsonParameters":true,"sendBody":true,"bodyParametersJson":"{\n  \"debate_id\": \"={{$json[\"body\"][\"debate_id\"]}}\"\n}"},"id":"AudioNotify","name":"Audio Complete","type":"n8n-nodes-base.httpRequest","typeVersion":4,"position":[800,200]},
+    {"parameters": {"authentication":"none","url":"http://api:5000/tools/video/generate","jsonParameters":true,"sendBody":true,"bodyParametersJson":"{\n  \"debate_id\": \"={{$json[\"body\"][\"debate_id\"]}}\",\n  \"width\": 1280,\n  \"height\": 720\n}"},"id":"VideoGen","name":"Generate Long","type":"n8n-nodes-base.httpRequest","typeVersion":4,"position":[1100,200]},
+    {"parameters": {"authentication":"none","url":"http://api:5000/tools/video/segment","jsonParameters":true,"sendBody":true,"bodyParametersJson":"{\n  \"debate_id\": \"={{$json[\"body\"][\"debate_id\"]}}\",\n  \"segments\":[{\"start\":0,\"duration\":20},{\"start\":20,\"duration\":20},{\"start\":40,\"duration\":20}]\n}"},"id":"VideoSeg","name":"Make Shorts","type":"n8n-nodes-base.httpRequest","typeVersion":4,"position":[1400,200]},
+    {"parameters": {"authentication":"none","url":"http://api:5000/webhooks/n8n/video-complete","jsonParameters":true,"sendBody":true,"bodyParametersJson":"{\n  \"debate_id\": \"={{$json[\"body\"][\"debate_id\"]}}\"\n}"},"id":"VideoNotify","name":"Video Complete","type":"n8n-nodes-base.httpRequest","typeVersion":4,"position":[1700,200]}
+  ],
+  "connections": {
+    "Webhook": {"main": [[{"node":"Generate Audio","type":"main","index":0}]]},
+    "Generate Audio": {"main": [[{"node":"Audio Complete","type":"main","index":0}]]},
+    "Audio Complete": {"main": [[{"node":"Generate Long","type":"main","index":0}]]},
+    "Generate Long": {"main": [[{"node":"Make Shorts","type":"main","index":0}]]},
+    "Make Shorts": {"main": [[{"node":"Video Complete","type":"main","index":0}]]}
+  },
+  "active": true,
+  "settings": {}
+}
